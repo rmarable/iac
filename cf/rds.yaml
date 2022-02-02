@@ -74,7 +74,7 @@ Resources:
       DatabaseName: !Join [ "", [ !Ref DBClusterNameTemplate, !Ref Environment ] ]
       Port: !Ref DBPort
       # Can't be deleted before first setting this to false
-      DeletionProtection: true
+      DeletionProtection: false
       MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecretName, ':SecretString:DBUsername}}' ]]
       MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecretName, ':SecretString:DBPassword}}' ]]
       EnableIAMDatabaseAuthentication: true
