@@ -108,7 +108,15 @@ Resources:
       SubnetIds:
         Fn::Split:
           - ','
-          - Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"
+          - Fn::Join:
+            - ""
+            - [ Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate", ",", Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPublic" ]
+        # Replace with this after testing it works with the api
+        # Fn::Split:
+        #   - ','
+        #   - Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"
+
+
 
   DBInstance:
     Type: AWS::RDS::DBInstance
