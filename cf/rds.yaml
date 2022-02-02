@@ -113,9 +113,7 @@ Resources:
   DBInstance:
     Type: AWS::RDS::DBInstance
     Properties:
-      # WIP RESEARCH MORE THIS
-      LicenseModel: postgresql-license
-      DBInstanceClass: "db.t3.small"
+      DBInstanceClass: db.t3.medium
       DBClusterIdentifier: !Ref DBCluster
       Engine: aurora-postgresql
       EngineVersion: !Ref DBEngineVersion
