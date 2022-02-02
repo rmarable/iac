@@ -119,7 +119,7 @@ Resources:
       DBClusterIdentifier: !Ref DBCluster
       Engine: aurora-postgresql
       EngineVersion: !Ref DBEngineVersion
-      DBParameterGroupName: !Ref DBParameterGroup
+      # DBParameterGroupName: !Ref DBParameterGroup
       # MonitoringInterval: !If [IsProd, 1, 0]
       # MonitoringRoleArn: !If [IsProd, !GetAtt MonitoringIAMRole.Arn, !Ref "AWS::NoValue"]
       AutoMinorVersionUpgrade: true
