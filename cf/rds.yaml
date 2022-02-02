@@ -20,7 +20,7 @@ Parameters:
   DBClusterNameTemplate:
     Description: The base name for the database cluster without the environment in it
     Type: String
-    Default: biomage-aurora-cluster
+    Default: biomageAuroraCluster
 
   DBPort:
     Type: String
@@ -71,7 +71,7 @@ Resources:
       EngineVersion: 13.4
       DBClusterParameterGroupName: !Ref DBParameterGroup
       DBSubnetGroupName: !Ref DBSubnetGroup
-      DatabaseName: !Join [ "-", [ !Ref DBClusterNameTemplate, !Ref Environment ] ]
+      DatabaseName: !Join [ "", [ !Ref DBClusterNameTemplate, !Ref Environment ] ]
       Port: !Ref DBPort
       # Can't be deleted before first setting this to false
       DeletionProtection: true
