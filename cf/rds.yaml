@@ -9,33 +9,31 @@ Parameters:
       - development
       - staging
       - production
-    Description: The environment for which the cluster need to be created.
+    Description: The environment for which the cluster needs to be created.
 
-  DBEngineVersion:
-    Default: 13.4
-    Type: Number
+  Region:
+    Type: String
+    Description: The region in which the cluster needs to be created.
+
+# --------------------------------------- Constants ---------------------------------------
+
+  DBClusterNameTemplate:
+    Description: The base name for the database cluster without the environment in it
+    Type: String
+    Default: biomage-aurora-cluster
 
   DBPort:
+    Type: String
     Default: '5432'
-    Type: String
 
-  DBName:
-    Description: The database name for Aurora PostgreSQL DB instance
-    Type: String
+  DBEngineVersion:
+    Type: Number
+    Default: 13.4
 
-  DBMasterUsername:
-    Description: The database master/super username.
+  DBSecretName:
+    Description: The name of the secret used to store master user and password.
     Type: String
-    NoEcho: "true"
-
-  DBMasterUserPassword:
-    Description: The password for database master/super user.
-    Type: String
-    NoEcho: "true"
-
-  DBInstanceClass:
-    Description: Database instance class
-    Type: String
+    Default: aurora-staging
 
   # DBAllocatedStorage:
   #   Description: The memory to be allocated for your database
@@ -73,15 +71,15 @@ Resources:
       EngineVersion: 13.4
       DBClusterParameterGroupName: !Ref DBParameterGroup
       DBSubnetGroupName: !Ref DBSubnetGroup
-      DatabaseName: !Ref DBName
+      DatabaseName: !Join [ "-", [ !Ref DBClusterNameTemplate, !Ref Environment ] ]
       Port: !Ref DBPort
       # Can't be deleted before first setting this to false
       DeletionProtection: true
-      MasterUserPassword: !Ref DBMasterUserPassword
-      MasterUsername: !Ref DBMasterUsername
+      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecretName, ':SecretString:username}}' ]]
+      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecretName, ':SecretString:password}}' ]]
       EnableIAMDatabaseAuthentication: true
       BackupRetentionPeriod: 5
-      SourceRegion: eu-west-1
+      SourceRegion: !Ref Region
       # Check if we want to change this
       StorageEncrypted: false
       VpcSecurityGroupIds: 
@@ -90,7 +88,7 @@ Resources:
   DBParameterGroup:
     Type: AWS::RDS::DBParameterGroup
     Properties:
-      Description: !Join [ "- ", [ "Aurora PG Database Instance Parameter Group for Cloudformation Stack ", !Ref DBName ] ]
+      Description: !Join [ "- ", [ "Parameter Group for database instance", !Ref DBClusterNameTemplate ] ]
       Family: aurora-postgresql13
       # Parameters:
         # shared_preload_libraries: "pg_stat_statements, pg_hint_plan"
@@ -102,7 +100,7 @@ Resources:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
       DBSubnetGroupDescription: !Sub Biomage subnet group for ${Environment}.
-      DBSubnetGroupName: !Sub AuroraSubnetGroup${Environment}
+      DBSubnetGroupName: !Sub aurora-subnet-group-${Environment}
       Tags:
         - Key: "Name"
           Value: AuroraSubnetGroupName
@@ -114,10 +112,10 @@ Resources:
   DBInstance:
     Type: AWS::RDS::DBInstance
     Properties:
-      # DBInstanceIdentifier: mypostgresdb
-      DBInstanceClass:
-        Ref: DBInstanceClass
-      # DBClusterIdentifier: !Ref AuroraDBCluster  
+      # WIP RESEARCH MORE THIS
+      LicenseModel: postgresql-license
+      DBInstanceClass: "db.t3.small"
+      DBClusterIdentifier: !Ref DBCluster
       Engine: aurora-postgresql
       EngineVersion: !Ref DBEngineVersion
       DBParameterGroupName: !Ref DBParameterGroup
@@ -129,9 +127,9 @@ Resources:
       EnablePerformanceInsights: true
       # PerformanceInsightsKMSKeyId: !Ref AuroraKMSCMK
       # PerformanceInsightsRetentionPeriod: !If [IsProd, 731, 7]
-      Tags:
-        - Key: "Name"
-          Value: mypostgresdb
+      # Tags:
+      #   - Key: "Name"
+      #     Value: mypostgresdb
       # DBName:
       #   !Ref: DBName
       # DBInstanceClass:
