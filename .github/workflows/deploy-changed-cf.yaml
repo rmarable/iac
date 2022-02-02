@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - revert-254-revert-253-1705-setup-rds
     paths:
       - 'cf/**.yaml'
       - 'cf/**.yml'
@@ -53,7 +54,7 @@ jobs:
     if: needs.get-modified-templates.outputs.num-files > 0
     strategy:
       matrix:
-        environment: ['production', 'staging']
+        environment: ['staging']
         template: ${{fromJson(needs.get-modified-templates.outputs.files)}}
     env:
       CLUSTER_ENV: ${{ matrix.environment }}
