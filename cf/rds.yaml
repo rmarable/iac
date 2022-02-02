@@ -75,8 +75,8 @@ Resources:
       Port: !Ref DBPort
       # Can't be deleted before first setting this to false
       DeletionProtection: true
-      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecretName, ':SecretString:username}}' ]]
-      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecretName, ':SecretString:password}}' ]]
+      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecretName, ':SecretString:DBUsername}}' ]]
+      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecretName, ':SecretString:DBPassword}}' ]]
       EnableIAMDatabaseAuthentication: true
       BackupRetentionPeriod: 5
       SourceRegion: !Ref Region
