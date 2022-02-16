@@ -11,11 +11,6 @@ Parameters:
       - production
     Description: The environment for which the cluster needs to be created.
 
-  Region:
-    Type: String
-    Default: 'eu-west-1'
-    Description: The region in which the cluster needs to be created.
-
 # --------------------------------------- Constants ---------------------------------------
 
   DBClusterNameTemplate:
@@ -80,7 +75,7 @@ Resources:
       MasterUserPassword: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:password}}" ]]
       EnableIAMDatabaseAuthentication: true
       BackupRetentionPeriod: 5
-      SourceRegion: !Ref Region
+      SourceRegion: eu-west-1
       # Check if we want to change this
       StorageEncrypted: false
       VpcSecurityGroupIds: 
