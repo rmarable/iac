@@ -1,0 +1,77 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: EC2 instance that can be accessed through SSM, it can access RDS for migrations/queries. For more information read https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html
+
+Parameters:
+  Environment:
+    Type: String
+    Default: development
+    AllowedValues:
+      - development
+      - staging
+      - production
+    Description: The environment for which the role needs to be created.
+
+# --------------------------------------- Roles ---------------------------------------
+Resources:
+  SSMProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: SSMInstanceProfile
+      Roles: 
+        - !Ref SSMRole
+
+  SSMRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Description: Basic SSM permissions for EC2
+      ManagedPolicyArns: 
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore 
+      RoleName: SSMInstanceProfile
+
+# --------------------------------------- Security Groups ---------------------------------------
+
+  WebSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable encrypted HTTP traffic only (in/out)
+      VpcId:
+        Fn::ImportValue:
+          !Sub 'eksctl-biomage-${Environment}-cluster::VPC'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '443'
+          ToPort: '443'
+          CidrIp: 0.0.0.0/0
+
+# --------------------------------------- Services ---------------------------------------
+
+  RDSAgent:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.micro
+      SecurityGroupIds:
+      - Ref: WebSecurityGroup
+      IamInstanceProfile: !Ref SSMProfile
+      ImageId: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+      Tags: 
+        - Key: ShouldEcho
+          Value: True
+      SubnetId:
+        Fn::Split:
+            - ','
+            - Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"
+      # SsmAssociations:
+      #   - AssociationParameters: 
+      #       - Key: valueToEcho
+      #         Value: 
+      #           - "Hello World from CloudFormation initialization!"
+      #     DocumentName: !Ref EchoDocument

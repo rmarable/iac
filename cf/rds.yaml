@@ -13,6 +13,7 @@ Parameters:
 
   Region:
     Type: String
+    Default: 'eu-west-1'
     Description: The region in which the cluster needs to be created.
 
 # --------------------------------------- Constants ---------------------------------------
@@ -75,8 +76,8 @@ Resources:
       Port: !Ref DBPort
       # Can't be deleted before first setting this to false
       DeletionProtection: false
-      MasterUsername: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:DBUsername}}" ]]
-      MasterUserPassword: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:DBPassword}}" ]]
+      MasterUsername: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:username}}" ]]
+      MasterUserPassword: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:password}}" ]]
       EnableIAMDatabaseAuthentication: true
       BackupRetentionPeriod: 5
       SourceRegion: !Ref Region
@@ -101,22 +102,14 @@ Resources:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
       DBSubnetGroupDescription: !Sub Biomage subnet group for ${Environment}.
-      DBSubnetGroupName: !Sub aurora-subnet-group-${Environment}
+      DBSubnetGroupName: !Sub rds-subnet-group-${Environment}
       Tags:
         - Key: "Name"
           Value: AuroraSubnetGroupName
       SubnetIds:
         Fn::Split:
           - ','
-          - Fn::Join:
-            - ""
-            - [ Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate", ",", Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPublic" ]
-        # Replace with this after testing it works with the api
-        # Fn::Split:
-        #   - ','
-        #   - Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"
-
-
+          - Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"
 
   DBInstance:
     Type: AWS::RDS::DBInstance
