@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: EC2 instance that can be accessed through SSM, it can access RDS for migrations/queries. For more information read https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html
+
+Parameters:
+  Environment:
+    Type: String
+    Default: development
+    AllowedValues:
+      - development
+      - staging
+      - production
+    Description: The environment for which the role needs to be created.
+
+Resources:
+# --------------------------------------- Security Groups ---------------------------------------
+
+  WebSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable encrypted HTTP traffic only (in/out)
+      VpcId:
+        Fn::ImportValue:
+          !Sub 'eksctl-biomage-${Environment}-cluster::VPC'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '443'
+          ToPort: '443'
+          CidrIp: 0.0.0.0/0
+
+# --------------------------------------- Services ---------------------------------------
+
+  RDSAgent:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.micro
+      SecurityGroupIds:
+        - Ref: WebSecurityGroup
+      IamInstanceProfile:
+        Fn::ImportValue: !Sub 'biomage-rds-agent-${Environment}::Role'
+      ImageId: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+      Tags: 
+        - Key: ShouldEcho
+          Value: True
+      SubnetId:
+        Fn::Split:
+            - ','
+            - Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"
+      # SsmAssociations:
+      #   - AssociationParameters: 
+      #       - Key: valueToEcho
+      #         Value: 
+      #           - "Hello World from CloudFormation initialization!"
+      #     DocumentName: !Ref EchoDocument
