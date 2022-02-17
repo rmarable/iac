@@ -56,7 +56,7 @@ Resources:
       SecurityGroupIds:
         - Ref: WebSecurityGroup
       IamInstanceProfile: !Ref SSMProfile
-      ImageId: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+      ImageId: ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
       Tags: 
         - Key: ShouldEcho
           Value: True
