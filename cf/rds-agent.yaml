@@ -12,6 +12,30 @@ Parameters:
     Description: The environment for which the role needs to be created.
 
 Resources:
+  SSMProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: SSMInstanceProfile
+      Roles: 
+        - !Ref SSMRole
+
+  SSMRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Description: Basic SSM permissions for EC2
+      ManagedPolicyArns: 
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore 
+      RoleName: SSMInstanceProfile
+
   WebSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -31,8 +55,7 @@ Resources:
       InstanceType: t3.micro
       SecurityGroupIds:
         - Ref: WebSecurityGroup
-      IamInstanceProfile:
-        Fn::ImportValue: !Sub 'biomage-rds-agent-${Environment}::Role'
+      IamInstanceProfile: !Ref SSMProfile
       ImageId: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
       Tags: 
         - Key: ShouldEcho
