@@ -98,7 +98,7 @@ jobs:
         if: ${{ !contains(matrix.template, 'irsa-') }}
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          parameter-overrides: "Environment=${{ matrix.environment }}, Region=${{ env.region }}"
+          parameter-overrides: "Environment=${{ matrix.environment }}"
           name: ${{ steps.set-name.outputs.stack-name }}
           template: ${{ matrix.template }}
           no-fail-on-empty-changeset: "1"

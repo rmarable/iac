@@ -12,8 +12,6 @@ Parameters:
     Description: The environment for which the role needs to be created.
 
 Resources:
-# --------------------------------------- Security Groups ---------------------------------------
-
   WebSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -26,8 +24,6 @@ Resources:
           FromPort: '443'
           ToPort: '443'
           CidrIp: 0.0.0.0/0
-
-# --------------------------------------- Services ---------------------------------------
 
   RDSAgent:
     Type: AWS::EC2::Instance
