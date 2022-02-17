@@ -10,6 +10,10 @@ Parameters:
       - staging
       - production
     Description: The environment for which the role needs to be created.
+  
+  LatestAmiId:
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
 
 Resources:
   SSMProfile:
@@ -56,7 +60,7 @@ Resources:
       SecurityGroupIds:
         - Ref: WebSecurityGroup
       IamInstanceProfile: !Ref SSMProfile
-      ImageId: ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+      ImageId: !Ref LatestAmiId
       Tags: 
         - Key: ShouldEcho
           Value: True
