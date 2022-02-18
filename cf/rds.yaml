@@ -25,20 +25,6 @@ Parameters:
     Type: String
     Default: aurora-staging
 
-  # DBAllocatedStorage:
-  #   Description: The memory to be allocated for your database
-  #   Type: Number
-
-  # EnablePerformanceInsights:
-  #   Description: A value that indicates whether to enable Performance Insights for the DB instance.
-  #   Type: String
-  #   Default: false
-
-  # MultiAZ:
-  #   Description: true, in case you wish to have a multi-AZ deployment
-  #   Type: String
-  #   Default: true
-
 Resources:
   DBCluster:
     Type: AWS::RDS::DBCluster
@@ -51,7 +37,7 @@ Resources:
       # DBClusterParameterGroupName: !Ref DBParameterGroup
       DBSubnetGroupName: !Ref DBSubnetGroup
       DBClusterIdentifier: !Join [ "-", ["aurora-cluster", !Ref Environment] ]
-      DatabaseName: "database"
+      DatabaseName: "auroraDB"
       Port: !Ref DBPort
       # Can't be deleted before first setting this to false
       DeletionProtection: false
