@@ -33,19 +33,16 @@ jobs:
         name: Check CloudFormation templates
         run: |-
           # Merge all modified and renamed files into one JSON array
-          # jq -s add ${HOME}/files_added.json ${HOME}/files_modified.json ${HOME}/files_renamed.json > ${HOME}/files_to_check.json
-          
-          # cat ${HOME}/files_to_check.json
-          # echo
-          
-          # #Select those that are CF templates (path starts with `cf/`)
-          # jq '[.[] | select(match("^cf/"))]' ${HOME}/files_to_check.json > ${HOME}/cf_files.json
-
-          cat ${HOME}/files.json
+          jq -s add ${HOME}/files_added.json ${HOME}/files_modified.json ${HOME}/files_renamed.json > ${HOME}/files_to_check.json
+          cat ${HOME}/files_to_check.json
           echo
+          #Select those that are CF templates (path starts with `cf/`)
+          jq '[.[] | select(match("^cf/"))]' ${HOME}/files_to_check.json > ${HOME}/cf_files.json
 
-          # Select those that are CF templates (path starts with `cf/`)
-          jq '[.[] | select(match("^cf/"))]' ${HOME}/files.json > ${HOME}/cf_files.json
+          # cat ${HOME}/files.json
+          # echo
+          # # Select those that are CF templates (path starts with `cf/`)
+          # jq '[.[] | select(match("^cf/"))]' ${HOME}/files.json > ${HOME}/cf_files.json
 
           # Set as output the minified JSON.
           echo "::set-output name=files::$(jq -c . < ${HOME}/cf_files.json)"
