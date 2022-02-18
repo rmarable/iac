@@ -15,6 +15,13 @@ Parameters:
     Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
     Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
 
+  # --------------------------------------- Constants ---------------------------------------
+
+  DBSecretName:
+    Description: The name of the secret used to store master user and password.
+    Type: String
+    Default: aurora-staging
+
 Resources:
   SSMProfile:
     Type: AWS::IAM::InstanceProfile
@@ -69,18 +76,26 @@ Resources:
       #UserData Runs when ec2 is being deployed
       UserData:
         Fn::Base64:
-          sudo yum install postgresql
+          !Sub
+            - sudo yum install postgresql
+              PGPASSWORD=${DBPassword} psql \
+                --host=aurora-cluster-staging.cluster-cuhf24s6layy.eu-west-1.rds.amazonaws.com \
+                --port=5432 \
+                --username=${DBUsername} \
+                --dbname=auroraDB \
+                -c "GRANT rds_iam TO ${DBUsername};
+            - DBUsername: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:username}}" ]]
+              DBPassword: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:username}}" ]]
+
+
+          # psql -c "
+          #   CREATE USER db_userx; 
+          #   GRANT rds_iam TO db_userx;
+          # "
         
       Tags:
         - Key: "Name"
           Value: !Sub "rds-${Environment}-ssm-agent"
-
-      # NetworkInterfaces: 
-      #   - AssociatePublicIpAddress: false
-      #     DeleteOnTermination: true
-      #     DeviceIndex: "0"
-          # SubnetId: 
-          #   !Ref: "PublicSubnet"
 
 Outputs:
   SecurityGroupId:
