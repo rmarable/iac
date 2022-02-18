@@ -39,17 +39,6 @@ Parameters:
   #   Type: String
   #   Default: true
 
-Outputs:
-  RDSEndpoint:
-    Description: RDS Database Endpoint
-    Value:
-      Fn::GetAtt:
-        - DBInstance
-        - Endpoint.Address
-    # Export:
-    #   Name:
-    #     Fn::Sub: "RDSEndpoint"
-
 Resources:
   DBCluster:
     Type: AWS::RDS::DBCluster
@@ -94,12 +83,12 @@ Resources:
       DBSubnetGroupDescription: !Sub Biomage subnet group for ${Environment}.
       DBSubnetGroupName: !Sub rds-subnet-group-${Environment}
       SubnetIds:
-        - !Select [ 0, Fn::Split: [',', Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"] ]
+        Fn::Split: [',', Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"]
       Tags:
         - Key: "Name"
           Value: AuroraSubnetGroup
 
-  DBInstance:
+  DBInstance1:
     Type: AWS::RDS::DBInstance
     Properties:
       DBInstanceClass: db.t3.medium
@@ -110,7 +99,20 @@ Resources:
       # MonitoringInterval: !If [IsProd, 1, 0]
       # MonitoringRoleArn: !If [IsProd, !GetAtt MonitoringIAMRole.Arn, !Ref "AWS::NoValue"]
       AutoMinorVersionUpgrade: true
-      DBSubnetGroupName: !Ref DBSubnetGroup
+      PubliclyAccessible: false
+      EnablePerformanceInsights: true
+
+  DBInstance2:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceClass: db.t3.medium
+      DBClusterIdentifier: !Ref DBCluster
+      Engine: aurora-postgresql
+      EngineVersion: !Ref DBEngineVersion
+      # DBParameterGroupName: !Ref DBParameterGroup
+      # MonitoringInterval: !If [IsProd, 1, 0]
+      # MonitoringRoleArn: !If [IsProd, !GetAtt MonitoringIAMRole.Arn, !Ref "AWS::NoValue"]
+      AutoMinorVersionUpgrade: true
       PubliclyAccessible: false
       EnablePerformanceInsights: true
         
