@@ -220,6 +220,6 @@ Resources:
                 Resource: 
                   - !Join
                     - ""
-                # Parametrize this (region, dbname and change user to a less privileged one)
-                    - [ "arn:aws:rds-db:", "eu-west-1:", !Ref AWS::AccountId , ":dbuser:", "db-EEV2FWU5IS65RGEDDEA7CH4ARQ/", "{{resolve:secretsmanager:", aurora-staging, ":SecretString:DBUsername}}" ]
+                # Parametrize this (region, dbname) and change user to a less privileged one
+                    - [ "arn:aws:rds-db:", "eu-west-1:", !Ref AWS::AccountId , ":dbuser:", Fn::ImportValue: !Sub "biomage-${Environment}-rds::DBClusterResourceId", "{{resolve:secretsmanager:", aurora-staging, ":SecretString:username}}" ]
                   # - "arn:aws:rds-db:eu-west-1:1234567890:dbuser:db-ABCDEFGHIJKL01234/postgres"

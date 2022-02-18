@@ -148,3 +148,8 @@ Resources:
         Fn::ImportValue:
           !Sub "eksctl-biomage-${Environment}-cluster::VPC"
   
+Outputs:
+  DBClusterResourceId:
+    Value: !Ref DBCluster
+    Export:
+      Name: !Sub "biomage-${Environment}-rds::DBClusterResourceId"
