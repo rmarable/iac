@@ -100,7 +100,7 @@ Resources:
       DBSubnetGroupName: !Sub rds-subnet-group-${Environment}
       Tags:
         - Key: "Name"
-          Value: AuroraSubnetGroupName
+          Value: AuroraSubnetGroup
       SubnetIds:
         Fn::Split:
           - ','

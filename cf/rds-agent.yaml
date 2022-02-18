@@ -65,6 +65,10 @@ Resources:
       SubnetId:
       #Pick first element in SubnetsPrivate
         !Select [ 0, Fn::Split: [',', Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"] ]
+      Tags:
+        - Key: "Name"
+          Value: !Sub "rds-${Environment}-ssm-agent"
+
       # NetworkInterfaces: 
       #   - AssociatePublicIpAddress: false
       #     DeleteOnTermination: true
