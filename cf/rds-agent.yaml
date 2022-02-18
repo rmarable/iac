@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: EC2 instance that can be accessed through SSM, it can access RDS for migrations/queries. For more information read https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html
+Description: Set up EC2 instance, can be accessed through SSM for connecting to RDS. For more information read https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html
 
 Parameters:
   Environment:
@@ -40,13 +40,14 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore 
       RoleName: SSMInstanceProfile
 
-  WebSecurityGroup:
+  RDSAgentSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable encrypted HTTP traffic only (in/out)
       VpcId:
         Fn::ImportValue:
           !Sub 'eksctl-biomage-${Environment}-cluster::VPC'
+    # this says who can access anyone within this security group
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: '443'
@@ -56,17 +57,23 @@ Resources:
   RDSAgent:
     Type: AWS::EC2::Instance
     Properties:
-      InstanceType: t3.micro
-      SecurityGroupIds:
-        - Ref: WebSecurityGroup
+      InstanceType: t2.micro
       IamInstanceProfile: !Ref SSMProfile
       ImageId: !Ref LatestAmiId
-      Tags: 
-        - Key: ShouldEcho
-          Value: True
-      # SsmAssociations:
-      #   - AssociationParameters: 
-      #       - Key: valueToEcho
-      #         Value: 
-      #           - "Hello World from CloudFormation initialization!"
-      #     DocumentName: !Ref EchoDocument
+      SecurityGroupIds:
+        - Ref: RDSAgentSecurityGroup
+      SubnetId:
+      #Pick first element in SubnetsPrivate
+        !Select [ 0, Fn::Split: [',', Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"] ]
+      # NetworkInterfaces: 
+      #   - AssociatePublicIpAddress: false
+      #     DeleteOnTermination: true
+      #     DeviceIndex: "0"
+          # SubnetId: 
+          #   !Ref: "PublicSubnet"
+
+Outputs:
+  SecurityGroupId:
+    Value: !Ref RDSAgentSecurityGroup
+    Export:
+      Name: !Sub "biomage-${Environment}-rds-agent::SecurityGroupId"

@@ -158,11 +158,11 @@ Resources:
           FromPort: !Ref DBPort
           IpProtocol: tcp
           ToPort: !Ref DBPort
-        # - SourceSecurityGroupId: 
-        #     Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::ClusterSecurityGroupId"
-        #   FromPort: !Ref DBPort
-        #   IpProtocol: tcp
-        #   ToPort: !Ref DBPort
+        - SourceSecurityGroupId: 
+            Fn::ImportValue: !Sub "biomage-${Environment}-rds-agent::SecurityGroupId"
+          FromPort: '443'
+          ToPort: '443'
+          IpProtocol: tcp
       Tags:
         - Key: Name
           Value: !Sub "${AWS::StackName}-security-group"
