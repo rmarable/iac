@@ -12,12 +12,6 @@ Parameters:
     Description: The environment for which the cluster needs to be created.
 
 # --------------------------------------- Constants ---------------------------------------
-
-  DBClusterNameTemplate:
-    Description: The base name for the database cluster without the environment in it
-    Type: String
-    Default: biomageAuroraCluster
-
   DBPort:
     Type: String
     Default: "5432"
@@ -67,7 +61,8 @@ Resources:
       EngineVersion: 13.4
       # DBClusterParameterGroupName: !Ref DBParameterGroup
       DBSubnetGroupName: !Ref DBSubnetGroup
-      DatabaseName: !Join [ "", [ !Ref DBClusterNameTemplate, !Ref Environment ] ]
+      DBClusterIdentifier: !Join [ "-", ["aurora-cluster", !Ref Environment] ]
+      DatabaseName: "database"
       Port: !Ref DBPort
       # Can't be deleted before first setting this to false
       DeletionProtection: false
@@ -98,13 +93,11 @@ Resources:
     Properties:
       DBSubnetGroupDescription: !Sub Biomage subnet group for ${Environment}.
       DBSubnetGroupName: !Sub rds-subnet-group-${Environment}
+      SubnetIds:
+        - !Select [ 0, Fn::Split: [',', Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"] ]
       Tags:
         - Key: "Name"
           Value: AuroraSubnetGroup
-      SubnetIds:
-        Fn::Split:
-          - ','
-          - Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"
 
   DBInstance:
     Type: AWS::RDS::DBInstance
@@ -120,6 +113,7 @@ Resources:
       DBSubnetGroupName: !Ref DBSubnetGroup
       PubliclyAccessible: false
       EnablePerformanceInsights: true
+        
       # PerformanceInsightsKMSKeyId: !Ref AuroraKMSCMK
       # PerformanceInsightsRetentionPeriod: !If [IsProd, 731, 7]
       # Tags:
@@ -131,12 +125,6 @@ Resources:
       #   !Ref: DBInstanceClass
       # Engine: aurora-postgresql
       # EngineVersion: 10.11
-      # MasterUsername:
-      #   !Ref: DBMasterUsername
-      # MasterUserPassword:
-      #   !Ref: DBMasterUserPassword
-      # DBSubnetGroupName:
-      #   !Ref: DBSubnetGroup
       # VPCSecurityGroups: 
       #   - !Ref RDSSecurityGroup
       # StorageType: gp2
