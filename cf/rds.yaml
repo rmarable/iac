@@ -149,7 +149,7 @@ Resources:
           !Sub "eksctl-biomage-${Environment}-cluster::VPC"
   
 Outputs:
-  DBClusterResourceId:
-    Value: !Ref DBCluster
+  DBInstance1ResourceId:
+    Value: !Ref DBInstance1
     Export:
-      Name: !Sub "biomage-${Environment}-rds::DBClusterResourceId"
+      Name: !Sub "biomage-${Environment}-rds::DBInstance1ResourceId"

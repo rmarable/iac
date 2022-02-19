@@ -221,5 +221,5 @@ Resources:
                   - !Join
                     - ""
                 # Parametrize this (region, dbname) and change user to a less privileged one
-                    - [ "arn:aws:rds-db:", "eu-west-1:", !Ref AWS::AccountId , ":dbuser:", Fn::ImportValue: !Sub "biomage-${Environment}-rds::DBClusterResourceId", "readwrite" ]
+                    - [ "arn:aws:rds-db:", "eu-west-1:", !Ref AWS::AccountId , ":dbuser:", Fn::ImportValue: !Sub "biomage-${Environment}-rds::DBInstance1ResourceId", "readwrite" ]
                   # - "arn:aws:rds-db:eu-west-1:1234567890:dbuser:db-ABCDEFGHIJKL01234/postgres"
