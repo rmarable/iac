@@ -83,10 +83,11 @@ Resources:
                 --port=5432 \
                 --username=${DBUsername} \
                 --dbname=auroraDB \
-                -c "GRANT rds_iam TO ${DBUsername};
+                -c "CREATE ROLE readwrite;
+                  GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO readwrite;
+                  GRANT rds_iam TO readwrite;"
             - DBUsername: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:username}}" ]]
               DBPassword: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:username}}" ]]
-
 
           # psql -c "
           #   CREATE USER db_userx; 
