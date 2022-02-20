@@ -211,16 +211,19 @@ Resources:
                   - events:RemoveTargets
                   - events:TestEventPattern
                 Resource: !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:*"
-        - PolicyName: "can-access-rds"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - "rds-db:connect"
-                Resource: 
-                  - !Join
-                    - ""
-                # Parametrize this (region, dbname) and change user to a less privileged one
-                    - [ "arn:aws:rds-db:", "eu-west-1:", !Ref AWS::AccountId , ":dbuser:", Fn::ImportValue: !Sub "biomage-${Environment}-rds::DBInstance1ResourceId", "readwrite" ]
-                  # - "arn:aws:rds-db:eu-west-1:1234567890:dbuser:db-ABCDEFGHIJKL01234/postgres"
+        # - PolicyName: "can-access-rds"
+        #   PolicyDocument:
+        #     Version: "2012-10-17"
+        #     Statement:
+        #       - Effect: Allow
+        #         Action:
+        #           - "rds-db:connect"
+        #         Resource: 
+        #           - !Join
+        #             - ""
+        #             # * is for the db instance resource id, not the user
+        #             - [ "arn:aws:rds-db:eu-west-1:", !Ref AWS::AccountId , ":dbuser:*/api" ]
+                    
+        #             # We use * because there's no straightforward way to get the DBInstance1ResourceId, this link has more information: https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/105
+        #             # - [ "arn:aws:rds-db:", "eu-west-1:", !Ref AWS::AccountId , ":dbuser:", Fn::ImportValue: !Sub "biomage-${Environment}-rds::DBInstance1ResourceId", "api" ]
+        #             # should look similar to this - "arn:aws:rds-db:eu-west-1:1234567890:dbuser:db-ABCDEFGHIJKL01234/postgres"
