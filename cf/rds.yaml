@@ -132,12 +132,12 @@ Resources:
         - SourceSecurityGroupId: 
             Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SharedNodeSecurityGroup"
           FromPort: !Ref DBPort
-          IpProtocol: tcp
           ToPort: !Ref DBPort
+          IpProtocol: tcp
         - SourceSecurityGroupId: 
             Fn::ImportValue: !Sub "biomage-${Environment}-rds-agent::SecurityGroupId"
-          FromPort: '443'
-          ToPort: '443'
+          FromPort: !Ref DBPort
+          ToPort: !Ref DBPort
           IpProtocol: tcp
       Tags:
         - Key: Name
