@@ -83,9 +83,9 @@ Resources:
                 --port=5432 \
                 --username=${DBUsername} \
                 --dbname=auroraDB \
-                -c "CREATE ROLE readwrite;
-                  GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO readwrite;
-                  GRANT rds_iam TO readwrite;"
+                -c "CREATE ROLE api;
+                  GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO api;
+                  GRANT rds_iam TO api;"
             - DBUsername: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:username}}" ]]
               DBPassword: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:username}}" ]]
 
