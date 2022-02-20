@@ -101,7 +101,7 @@ Resources:
       AutoMinorVersionUpgrade: true
       PubliclyAccessible: false
       EnablePerformanceInsights: true
-        
+    
       # PerformanceInsightsKMSKeyId: !Ref AuroraKMSCMK
       # PerformanceInsightsRetentionPeriod: !If [IsProd, 731, 7]
       # Tags:

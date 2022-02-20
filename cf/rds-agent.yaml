@@ -17,6 +17,11 @@ Parameters:
 
   # --------------------------------------- Constants ---------------------------------------
 
+  RDSPort:
+    Default: '5432'
+    Type: String
+
+
   DBSecretName:
     Description: The name of the secret used to store master user and password.
     Type: String
@@ -56,9 +61,9 @@ Resources:
           !Sub 'eksctl-biomage-${Environment}-cluster::VPC'
     # this says who can access anyone within this security group
       SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: '443'
-          ToPort: '443'
+        - FromPort: !Ref RDSPort
+          ToPort: !Ref RDSPort
+          IpProtocol: tcp
           CidrIp: 0.0.0.0/0
 
   RDSAgent:
