@@ -52,20 +52,6 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore 
       RoleName: SSMInstanceProfile
 
-  RDSAgentSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Enable encrypted HTTP traffic only (in/out)
-      VpcId:
-        Fn::ImportValue:
-          !Sub 'eksctl-biomage-${Environment}-cluster::VPC'
-    # this says who can access anyone within this security group
-      SecurityGroupIngress:
-        - FromPort: !Ref RDSPort
-          ToPort: !Ref RDSPort
-          IpProtocol: tcp
-          CidrIp: 0.0.0.0/0
-
   RDSAgent:
     Type: AWS::EC2::Instance
     Properties:
@@ -73,7 +59,7 @@ Resources:
       IamInstanceProfile: !Ref SSMProfile
       ImageId: !Ref LatestAmiId
       SecurityGroupIds:
-        - Ref: RDSAgentSecurityGroup
+        - Fn::ImportValue: !Sub "biomage-${Environment}-rds::RDSAgentSecurityGroupId"
       SubnetId:
       #Pick first element in SubnetsPrivate
         !Select [ 0, Fn::Split: [',', Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"] ]
@@ -102,9 +88,3 @@ Resources:
       Tags:
         - Key: "Name"
           Value: !Sub "rds-${Environment}-ssm-agent"
-
-Outputs:
-  SecurityGroupId:
-    Value: !Ref RDSAgentSecurityGroup
-    Export:
-      Name: !Sub "biomage-${Environment}-rds-agent::SecurityGroupId"
