@@ -69,9 +69,9 @@ Resources:
       ImageId: !Ref LatestAmiId
       SecurityGroupIds:
         - Ref: RDSAgentSecurityGroup
-      # SubnetId:
-      # #Pick first element in SubnetsPrivate
-      #   !Select [ 0, Fn::Split: [',', Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"] ]
+      SubnetId:
+      #Pick first element in SubnetsPrivate
+        !Select [ 0, Fn::Split: [',', Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"] ]
       
       #UserData Runs when ec2 is being deployed
       UserData:
