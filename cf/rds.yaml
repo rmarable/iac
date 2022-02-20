@@ -147,9 +147,3 @@ Resources:
       VpcId:
         Fn::ImportValue:
           !Sub "eksctl-biomage-${Environment}-cluster::VPC"
-  
-Outputs:
-  DBInstance1ResourceId:
-    Value: !Ref DBInstance1
-    Export:
-      Name: !Sub "biomage-${Environment}-rds::DBInstance1ResourceId"
