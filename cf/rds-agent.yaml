@@ -62,7 +62,7 @@ Resources:
       UserData:
         Fn::Base64:
           !Sub
-            - sudo yum install postgresql
+            - sudo yum -y install postgresql
               PGPASSWORD='${DBPassword}' psql \
                 --host=aurora-cluster-staging.cluster-cuhf24s6layy.eu-west-1.rds.amazonaws.com \
                 --port=5432 \
@@ -72,7 +72,7 @@ Resources:
                   GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO api_role;
                   GRANT rds_iam TO api_role;'
             - DBUsername: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:username}}" ]]
-              DBPassword: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:username}}" ]]
+              DBPassword: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:password}}" ]]
 
           # psql -c "
           #   CREATE USER db_userx; 
