@@ -16,12 +16,6 @@ Parameters:
     Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
 
   # --------------------------------------- Constants ---------------------------------------
-
-  RDSPort:
-    Default: '5432'
-    Type: String
-
-
   DBSecretName:
     Description: The name of the secret used to store master user and password.
     Type: String
