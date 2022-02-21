@@ -60,9 +60,11 @@ Resources:
       
       #UserData Runs when ec2 is being deployed
       UserData:
-        Fn::Base64:
-          !Sub
-            - sudo yum -y install postgresql
+        Fn::Base64: 
+          Fn::Sub:
+            - |
+              #!/bin/bash -e
+              sudo yum -y install postgresql
               PGPASSWORD='${DBPassword}' psql \
                 --host=aurora-cluster-staging.cluster-cuhf24s6layy.eu-west-1.rds.amazonaws.com \
                 --port=5432 \
