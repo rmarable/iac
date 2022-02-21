@@ -44,7 +44,7 @@ Resources:
               - 'sts:AssumeRole'
       Description: Basic SSM permissions for EC2
       ManagedPolicyArns: 
-        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore 
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
       Policies:
         - PolicyName: "can-access-rds"
           PolicyDocument:
@@ -54,8 +54,8 @@ Resources:
                 Action:
                   - "rds-db:connect"
                 Resource: 
-                  - arn:aws:rds-db:*:*:dbuser:*/* 
-                  # - !Sub "arn:aws:rds-db:eu-west-1:${AWS::AccountId}:dbuser:*/dev_role"
+                  # - arn:aws:rds-db:eu-west-1:*:dbuser:*/* 
+                  - !Sub "arn:aws:rds-db:eu-west-1:${AWS::AccountId}:dbuser:*/dev_role"
 
   RDSAgent:
     Type: AWS::EC2::Instance
@@ -81,10 +81,10 @@ Resources:
                 --port=5432 \
                 --username=${DBUsername} \
                 --dbname=auroraDB \
-                -c 'CREATE ROLE api_role;
+                -c 'CREATE ROLE api_role WITH LOGIN;
                   GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO api_role;
                   GRANT rds_iam TO api_role;
-                  CREATE ROLE dev_role;
+                  CREATE ROLE dev_role WITH LOGIN;
                   GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO dev_role;
                   GRANT rds_iam TO dev_role;'
             - DBUsername: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:username}}" ]]
