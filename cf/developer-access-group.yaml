@@ -211,16 +211,6 @@ Resources:
                   - events:RemoveTargets
                   - events:TestEventPattern
                 Resource: !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:*"
-
-        - PolicyName: "can-access-rds"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - "rds-db:connect"
-                Resource: 
-                  - !Sub "arn:aws:rds-db:eu-west-1:${AWS::AccountId}:dbuser:*/dev_role"        
         # - PolicyName: "can-access-rds"
         #   PolicyDocument:
         #     Version: "2012-10-17"

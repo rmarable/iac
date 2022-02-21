@@ -32,6 +32,7 @@ Resources:
   SSMRole:
     Type: AWS::IAM::Role
     Properties: 
+      RoleName: SSMInstanceProfile
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -44,7 +45,17 @@ Resources:
       Description: Basic SSM permissions for EC2
       ManagedPolicyArns: 
         - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore 
-      RoleName: SSMInstanceProfile
+      Policies:
+        - PolicyName: "can-access-rds"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "rds-db:connect"
+                Resource: 
+                  - !Sub "arn:aws:rds-db:eu-west-1:${AWS::AccountId}:dbuser:*/dev_role"
+        
 
   RDSAgent:
     Type: AWS::EC2::Instance
