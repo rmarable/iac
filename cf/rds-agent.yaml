@@ -57,10 +57,10 @@ Resources:
       SubnetId:
       #Pick first element in SubnetsPrivate
         !Select [ 0, Fn::Split: [',', Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::SubnetsPrivate"] ]
-      
+
       #UserData Runs when ec2 is being deployed
       UserData:
-        Fn::Base64: 
+        Fn::Base64:
           Fn::Sub:
             - |
               #!/bin/bash -e
@@ -72,7 +72,10 @@ Resources:
                 --dbname=auroraDB \
                 -c 'CREATE ROLE api_role;
                   GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO api_role;
-                  GRANT rds_iam TO api_role;'
+                  GRANT rds_iam TO api_role;
+                  CREATE ROLE dev_role;
+                  GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO dev_role;
+                  GRANT rds_iam TO dev_role;'
             - DBUsername: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:username}}" ]]
               DBPassword: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:password}}" ]]
 
@@ -80,7 +83,7 @@ Resources:
           #   CREATE USER db_userx; 
           #   GRANT rds_iam TO db_userx;
           # "
-        
+
       Tags:
         - Key: "Name"
           Value: !Sub "rds-${Environment}-ssm-agent"
