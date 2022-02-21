@@ -101,11 +101,11 @@ Resources:
                 --username=${DBUsername} \
                 --dbname=auroraDB \
                 -c 'CREATE ROLE api_role WITH LOGIN;
-                  GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO api_role;
-                  GRANT rds_iam TO api_role;
                   CREATE ROLE dev_role WITH LOGIN;
-                  GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO dev_role;
-                  GRANT rds_iam TO dev_role;'
+                  GRANT rds_iam TO api_role;
+                  GRANT rds_iam, ${DBUsername} TO dev_role;
+                  
+                  ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO api_role;'
             - DBUsername: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:username}}" ]]
               DBPassword: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:password}}" ]]
 
