@@ -82,6 +82,7 @@ Resources:
                 Action: 's3:*'
                 Resource:
                   - !Sub "arn:aws:s3:::*-${Environment}/*"
+                  - !Sub "arn:aws:s3:::*-${Environment}"
 
         - PolicyName: "can-create-xray-groups"
           PolicyDocument:
@@ -184,6 +185,7 @@ Resources:
                   - "iam:GetRole"
                   - "iam:ListPolicies"
                   - "iam:ListUserPolicies"
+                  - "iam:ListAttachedUserPolicies"
                   - "iam:GetPolicy"
                   - "iam:GetRolePolicy"
                 Resource:
