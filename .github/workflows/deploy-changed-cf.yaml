@@ -104,7 +104,7 @@ jobs:
           capabilities: "CAPABILITY_IAM,CAPABILITY_NAMED_IAM"
 
       - id: deploy-irsa-template
-        if: ${{ contains(matrix.template, 'irsa-') && github.ref == 'refs/heads/master' }}
+        if: ${{ contains(matrix.template, 'irsa-') }}
         name: Deploy IRSA CloudFormation template
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
