@@ -120,6 +120,11 @@ Resources:
           ToPort: !Ref DBPort
           IpProtocol: tcp
         - SourceSecurityGroupId: 
+            Fn::ImportValue: !Sub "eksctl-biomage-${Environment}-cluster::ClusterSecurityGroupId"
+          FromPort: !Ref DBPort
+          ToPort: !Ref DBPort
+          IpProtocol: tcp
+        - SourceSecurityGroupId: 
             !Ref RDSAgentSecurityGroup
           FromPort: !Ref DBPort
           ToPort: !Ref DBPort
