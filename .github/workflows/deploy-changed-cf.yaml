@@ -33,7 +33,7 @@ jobs:
         name: Check CloudFormation templates
         run: |-
           # Merge all modified and renamed files into one JSON array
-          jq -s add ${HOME}/files_added.json ${HOME}/files_modified.json ${HOME}/files_renamed.json | unique > ${HOME}/files_to_check.json
+          jq -s 'add | unique' ${HOME}/files_added.json ${HOME}/files_modified.json ${HOME}/files_renamed.json > ${HOME}/files_to_check.json
 
           echo "files_to_check.json"
           cat ${HOME}/files_to_check.json
