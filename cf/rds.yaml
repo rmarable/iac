@@ -80,6 +80,7 @@ Resources:
       DBInstanceClass: db.t3.medium
       DBClusterIdentifier: !Ref DBCluster
       Engine: aurora-postgresql
+      EngineVersion: !Ref DBEngineVersion
       # DBParameterGroupName: !Ref DBParameterGroup
       AutoMinorVersionUpgrade: true
       PubliclyAccessible: false
