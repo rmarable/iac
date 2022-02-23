@@ -34,7 +34,6 @@ Resources:
       Engine: aurora-postgresql
       EngineMode: provisioned
       EngineVersion: !Ref DBEngineVersion
-      # DBClusterParameterGroupName: !Ref DBParameterGroup
       DBSubnetGroupName: !Ref DBSubnetGroup
       DBClusterIdentifier: !Join [ "-", ["aurora-cluster", !Ref Environment] ]
       DatabaseName: "aurora_db"
@@ -50,18 +49,6 @@ Resources:
       StorageEncrypted: false
       VpcSecurityGroupIds: 
         - !Ref RDSSecurityGroup
-
-  # We might not need this
-  # DBParameterGroup:
-  #   Type: AWS::RDS::DBParameterGroup
-  #   Properties:
-  #     Description: !Join [ "- ", [ "Parameter Group for database instance", !Ref DBClusterNameTemplate ] ]
-  #     Family: aurora-postgresql13
-  #     # Parameters:
-  #       # shared_preload_libraries: "pg_stat_statements, pg_hint_plan"
-  #     Tags:
-  #       - Key: "Name"
-  #         Value: RdsParameterGroup
 
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
@@ -81,18 +68,8 @@ Resources:
       DBClusterIdentifier: !Ref DBCluster
       Engine: aurora-postgresql
       EngineVersion: !Ref DBEngineVersion
-      # DBParameterGroupName: !Ref DBParameterGroup
       AutoMinorVersionUpgrade: true
       PubliclyAccessible: false
-      # Look more into how PerformanceInsights works
-      # EnablePerformanceInsights: true
-
-      # Look more into whether we want Enhanced Monitoring metrics or not
-      # MonitoringInterval: !If [IsProd, 1, 0]
-      # MonitoringRoleArn: !If [IsProd, !GetAtt MonitoringIAMRole.Arn, !Ref "AWS::NoValue"]
-      
-      # StorageType: gp2
-      # StorageEncrypted: "false"
   
   RDSAgentSecurityGroup:
     Type: AWS::EC2::SecurityGroup

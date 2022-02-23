@@ -54,7 +54,6 @@ Resources:
                 Action:
                   - "rds-db:connect"
                 Resource: 
-                  # - arn:aws:rds-db:eu-west-1:*:dbuser:*/* 
                   - !Sub "arn:aws:rds-db:eu-west-1:${AWS::AccountId}:dbuser:*/dev_role"
 
   RDSAgent:
