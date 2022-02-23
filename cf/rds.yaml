@@ -44,7 +44,7 @@ Resources:
       MasterUserPassword: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:password}}" ]]
       EnableIAMDatabaseAuthentication: true
       BackupRetentionPeriod: 5
-      SourceRegion: eu-west-1
+      SourceRegion: !Sub '${AWS::Region}'
       # Check if we want to change this
       StorageEncrypted: false
       VpcSecurityGroupIds: 

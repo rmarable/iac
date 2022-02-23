@@ -220,13 +220,9 @@ Resources:
                 Action:
                   - "rds-db:connect"
                 Resource:
-                  - !Sub "arn:aws:rds-db:eu-west-1:${AWS::AccountId}:dbuser:*/api_role"
+                  - !Sub "arn:aws:rds-db:${AWS::Region}:${AWS::AccountId}:dbuser:*/api_role"
               - Effect: Allow
                 Action:
                   - "rds:DescribeDBClusterEndpoints"
                 Resource:
                   - !Sub "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:aurora-cluster-${Environment}"
-                    
-                    # Using * version instead because there's no straightforward way to get the DBInstance1ResourceId, this link has more information: https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/105
-                    # - [ "arn:aws:rds-db:", "eu-west-1:", !Ref AWS::AccountId , ":dbuser:", Fn::ImportValue: !Sub "biomage-${Environment}-rds::DBInstance1ResourceId", "api" ]
-                    # should look similar to this - "arn:aws:rds-db:eu-west-1:1234567890:dbuser:db-ABCDEFGHIJKL01234/api_role"
