@@ -219,7 +219,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - "rds-db:connect"
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:rds-db:eu-west-1:${AWS::AccountId}:dbuser:*/api_role"
               - Effect: Allow
                 Action:

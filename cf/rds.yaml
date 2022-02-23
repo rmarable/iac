@@ -37,7 +37,7 @@ Resources:
       # DBClusterParameterGroupName: !Ref DBParameterGroup
       DBSubnetGroupName: !Ref DBSubnetGroup
       DBClusterIdentifier: !Join [ "-", ["aurora-cluster", !Ref Environment] ]
-      DatabaseName: "auroraDB"
+      DatabaseName: "aurora_db"
       Port: !Ref DBPort
       # Can't be deleted before first setting this to false, should be true when we are done with the basic setup of db
       DeletionProtection: false
