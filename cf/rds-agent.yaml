@@ -72,48 +72,8 @@ Resources:
       #UserData Runs when ec2 is being deployed
       UserData:
         Fn::Base64:
-          Fn::Sub:
-            - |
-              Content-Type: multipart/mixed; boundary="//"
-              MIME-Version: 1.0
-
-              --//
-              Content-Type: text/cloud-config; charset="us-ascii"
-              MIME-Version: 1.0
-              Content-Transfer-Encoding: 7bit
-              Content-Disposition: attachment; filename="cloud-config.txt"
-
-              #cloud-config
-              cloud_final_modules:
-              - [scripts-user, always]
-
-              --//
-              Content-Type: text/x-shellscript; charset="us-ascii"
-              MIME-Version: 1.0
-              Content-Transfer-Encoding: 7bit
-              Content-Disposition: attachment; filename="userdata.txt"
-
-              #!/bin/bash -e
-              sudo yum -y install postgresql
-              PGPASSWORD='${DBPassword}' psql \
-                --host=aurora-cluster-staging.cluster-cuhf24s6layy.eu-west-1.rds.amazonaws.com \
-                --port=5432 \
-                --username=${DBUsername} \
-                --dbname=aurora_db \
-                -c 'CREATE ROLE api_role WITH LOGIN;
-                  CREATE ROLE dev_role WITH LOGIN;
-                  GRANT rds_iam TO api_role;
-                  GRANT rds_iam, ${DBUsername} TO dev_role;
-                  
-                  ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO api_role;'
-            - DBUsername: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:username}}" ]]
-              DBPassword: !Join ["", ["{{resolve:secretsmanager:", !Ref DBSecretName, ":SecretString:password}}" ]]
-
-          # psql -c "
-          #   CREATE USER db_userx; 
-          #   GRANT rds_iam TO db_userx;
-          # "
-
+          #!/bin/bash -e
+          sudo yum -y install postgresql
       Tags:
         - Key: "Name"
           Value: !Sub "rds-${Environment}-ssm-agent"
