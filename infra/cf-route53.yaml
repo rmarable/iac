@@ -16,11 +16,12 @@ Parameters:
 
   DomainName:
     Type: String
-    Default: biomage.net.
+    Default: apps.flaretx.com.
     Description: The URL of the domain to apply the change to.
 
   HostedZoneId:
     Type: String
+    Default: Z02553703C325QRBKLZMV
     Description: The ID of the hosted zone
 
 
