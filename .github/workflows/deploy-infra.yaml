@@ -10,7 +10,7 @@ on:
         - configure
         default: configure
 env:
-  region: 'eu-west-1'
+  region: 'us-east-2'
 
 # this ensures that only one CI pipeline with the same key
 #  can run at once in order to prevent undefined states
