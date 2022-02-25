@@ -12,7 +12,7 @@ Parameters:
 
   DNSName:
     Type: String
-    Default: elb-biomage
+    Default: cellenics
     Description: The URL of the load balancer to deploy.
 
   DomainName:
