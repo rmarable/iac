@@ -16,7 +16,7 @@ Parameters:
 
   DomainName:
     Type: String
-    Default: apps.flaretx.com.
+    Default: apps.flaretx.com
     Description: The URL of the domain to apply the change to.
 
   HostedZoneId:
